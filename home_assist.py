@@ -6,7 +6,6 @@ import sys
 import json
 import pycurl
 
-
 class Command:
   def __init__(self, target, action):
     self.target_ = target.lower()
@@ -54,7 +53,7 @@ class IRCommand(Command):
 
 class WebHookCommand(Command):
   u""" IFTTT webhook用コマンド"""
-  def __init__(self, target, key, action, event):
+  def __init__(self, target, action, key, event):
     super().__init__(target, action)
     self.event_ = event
     self.key_ = key 
@@ -75,8 +74,15 @@ class WebHookCommand(Command):
 
 class CommandFacory:
   def __init__(self):
-    self.cmd = []
+    self.cmd = {}
     self.load_command()
+
+  def set_command(self, target, action, command):
+    target = target.lower()
+    action = action.lower()
+    if target not in self.cmd:
+      self.cmd[target] = {}
+    self.cmd[target][action] = command 
 
   def load_command(self):
     f = open("config.json", "r") 
@@ -87,26 +93,31 @@ class CommandFacory:
     cmd_files = json_dict["ir_cmd"]["cmd_files"]
     remo_files = os.listdir(cmd_files)
     for f in remo_files:
-      device, action = f.split(".")
-      cmd = IRCommand(device, action, dev_file, os.path.join(cmd_files, f))
-      self.cmd.append(cmd)
- 
+      target, action = f.split(".")
+      cmd = IRCommand(target, action, dev_file, os.path.join(cmd_files, f))
+      self.set_command(target, action, cmd)
+
     # WebHook用のコマンド
     key = json_dict["webhook"]["key"]
-    for event in json_dict["webhook"]["events"]:
-      self.cmd.append(WebHookCommand(event["target"], key, event["action"], event["event"]))
+    for e in json_dict["webhook"]["events"]:
+      target = e["target"]
+      action = e["action"]
+      event = e["event"]
+
+      cmd = WebHookCommand(target, action, key, event)
+      self.set_command(target, action, cmd)
 
   def Create(self, request):
     if "." not in request:
         return NullCommand("unknown", "unknown")
     target, action = [req.strip().lower() for req in request.split(".")]  
-    cmd = [c for c in self.cmd if c.target() == target and c.action() == action]
+    cmd = self.cmd[target][action]
     if not cmd:
       return NullCommand(target, action)
-    
-    if len(cmd) != 1:
-      print("WARN: Can't detect single command:", request)
-    return cmd[0]
+    return cmd
+
+  def AvailableCommands(self):
+    return self.cmd 
 
 
 class HomeAssistant:
@@ -114,10 +125,11 @@ class HomeAssistant:
     self.Factory = CommandFacory()
 
   def Show(self):
-    #msg = "利用可能なコマンドはこちらです！:\n"
-    #for device in tmp:
-    #  msg += "    [%10s]: %s\n" % (device, ", ".join(sorted(tmp[device])))
-    return 
+    cmds = self.Factory.AvailableCommands()
+    msg = "利用可能なコマンドはこちらです！:\n"
+    for action in cmds:
+      msg += "  [%-10ls]: %s\n" % (action, ", ".join(sorted(cmds[action]))) 
+    return msg 
 
   def Send(self, command):
     cmds = self.parse_command(command)
@@ -158,4 +170,5 @@ if __name__ == "__main__":
   assistant = HomeAssistant()
   ret = assistant.Send(",".join(sys.argv[1:]))
   print (ret)
+  print (assistant.Show())
 
