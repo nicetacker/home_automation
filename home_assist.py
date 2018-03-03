@@ -108,22 +108,22 @@ class CommandFacory:
     cmd = self.cmd[target][action]
     if not cmd:
       return NullCommand(target, action)
-    
     return cmd
 
   def AvailableCommands(self):
-      #return "\n".join([c.command() for c in self.cmd])
-      return ""
+    return self.cmd 
+
 
 class HomeAssistant:
   def __init__(self):
     self.Factory = CommandFacory()
 
   def Show(self):
-    #msg = "利用可能なコマンドはこちらです！:\n"
-    #for device in tmp:
-    #  msg += "    [%10s]: %s\n" % (device, ", ".join(sorted(tmp[device])))
-    return self.Factory.AvailableCommands() 
+    cmds = self.Factory.AvailableCommands()
+    msg = "利用可能なコマンドはこちらです！:\n"
+    for action in cmds:
+      msg += "  [%-10ls]: %s\n" % (action, ", ".join(sorted(cmds[action]))) 
+    return msg 
 
   def Send(self, command):
     cmds = self.parse_command(command)
