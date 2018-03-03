@@ -22,7 +22,7 @@ class Command:
     return "[%s] %s" % (self.target_, self.action_)
 
   def Dispatch(self):
-    raise ""
+    raise NotImplementedError()
 
 
 class NullCommand(Command):
@@ -45,7 +45,7 @@ class IRCommand(Command):
     return (dev_type, host, mac)
 
   def Dispatch(self):
-    dev_type, host, mac = self.parse_devfile_(self.dev_file)
+    dev_type, host, mac = self.parse_devfile_(self.dev_file_)
     dev = broadlink.gendevice(dev_type, (host, 80), mac)
     dev.auth()
     dev.send_data(self.ir_cmd_)
