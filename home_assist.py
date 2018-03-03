@@ -1,10 +1,10 @@
 #coding: utf-8
 
 import broadlink
-import subprocess 
 import os
 import sys
 import json
+import pycurl
 
 
 class Command:
@@ -61,8 +61,15 @@ class WebHookCommand(Command):
 
   def Dispatch(self):
     url = "https://maker.ifttt.com/trigger/%s/with/key/%s" % (self.event_, self.key_)
-    cmd = ["curl", "-X" , "POST", "-H", "Content-Type: application/json", "-d", "{\"value1\": \"aaa\"}", url] 
-    subprocess.call(cmd)
+    options = {"value1": ""}
+
+    c = pycurl.Curl()
+    c.setopt(pycurl.URL, url)
+    c.setopt(pycurl.HTTPHEADER, ['Content-Type: application/json'])
+    c.setopt(pycurl.POST, 1)
+    c.setopt(pycurl.POSTFIELDS, json.dumps(options))
+    c.perform()
+
     return True
 
 
