@@ -108,6 +108,8 @@ class CommandFacory:
       print("WARN: Can't detect single command:", request)
     return cmd[0]
 
+  def AvailableCommands(self):
+      return "\n".join([c.command() for c in self.cmd])
 
 class HomeAssistant:
   def __init__(self):
@@ -117,7 +119,7 @@ class HomeAssistant:
     #msg = "利用可能なコマンドはこちらです！:\n"
     #for device in tmp:
     #  msg += "    [%10s]: %s\n" % (device, ", ".join(sorted(tmp[device])))
-    return 
+    return self.Factory.AvailableCommands() 
 
   def Send(self, command):
     cmds = self.parse_command(command)
@@ -158,4 +160,5 @@ if __name__ == "__main__":
   assistant = HomeAssistant()
   ret = assistant.Send(",".join(sys.argv[1:]))
   print (ret)
+  print (assistant.Show())
 
