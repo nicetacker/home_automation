@@ -77,6 +77,13 @@ class CommandFacory:
     self.cmd = {}
     self.load_command()
 
+  def set_command(self, target, action, command):
+    target = target.lower()
+    action = action.lower()
+    if target not in self.cmd:
+      self.cmd[target] = {}
+    self.cmd[target][action] = command 
+
   def load_command(self):
     f = open("config.json", "r") 
     json_dict = json.load(f)
@@ -86,20 +93,19 @@ class CommandFacory:
     cmd_files = json_dict["ir_cmd"]["cmd_files"]
     remo_files = os.listdir(cmd_files)
     for f in remo_files:
-      target, action = [w.lower() for w in f.split(".")]
-      if target not in self.cmd:
-          self.cmd[target] = {}
-      self.cmd[target][action] = IRCommand(target, action, dev_file, os.path.join(cmd_files, f))
+      target, action = f.split(".")
+      cmd = IRCommand(target, action, dev_file, os.path.join(cmd_files, f))
+      self.set_command(target, action, cmd)
 
     # WebHook用のコマンド
     key = json_dict["webhook"]["key"]
     for e in json_dict["webhook"]["events"]:
-      target = e["target"].lower()
-      action = e["action"].lower()
-      event =  e["event"]
-      if target not in self.cmd:
-          self.cmd[target] = {}
-      self.cmd[target][action] = WebHookCommand(target, action, key, event)
+      target = e["target"]
+      action = e["action"]
+      event = e["event"]
+
+      cmd = WebHookCommand(target, action, key, event)
+      self.set_command(target, action, cmd)
 
   def Create(self, request):
     if "." not in request:
