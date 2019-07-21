@@ -11,3 +11,11 @@ func TestHello(t *testing.T) {
 		t.Errorf("actual %v expect %v", actual, expect)
 	}
 }
+
+func TestHello2(t *testing.T) {
+	actual := Greeting("Taro")
+	expect := "Hello, Hoge"
+	if actual != expect {
+		t.Errorf("actual %v expect %v", actual, expect)
+	}
+}
