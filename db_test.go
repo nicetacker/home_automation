@@ -33,7 +33,7 @@ func Test_DB(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		db, err := createDB(tt.path)
+		db, err := CreateDB(tt.path)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("%v error = %v, wantErr %v", tt.name, err, tt.wantErr)
 		}

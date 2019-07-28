@@ -12,7 +12,7 @@ type commandDB struct {
 	dbMap map[string]irCode
 }
 
-func createDB(path string) (*commandDB, error) {
+func CreateDB(path string) (*commandDB, error) {
 	db := &commandDB{
 		path:  path,
 		dbMap: make(map[string]irCode),

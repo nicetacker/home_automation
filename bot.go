@@ -31,7 +31,7 @@ func CreateSlackListener(token string, id string, channel string) *SlackListener
 	}
 
 	// Create DB
-	commandDB, err := createDB(mapFile)
+	commandDB, err := CreateDB(mapFile)
 	if err != nil {
 		log.Printf("[ERROR] db create : %v", err)
 	}
