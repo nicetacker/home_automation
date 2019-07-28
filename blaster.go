@@ -13,7 +13,7 @@ type broadlinkBlaster struct {
 	device *broadlink.Device
 }
 
-func discoverBlaster() (*broadlinkBlaster, error) {
+func DiscoverBlaster() (*broadlinkBlaster, error) {
 	// Discover devices
 	devs, _ := broadlink.DiscoverDevices(1*time.Second, 0)
 	if len(devs) == 0 {

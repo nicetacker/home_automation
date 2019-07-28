@@ -25,7 +25,7 @@ type SlackListener struct {
 // CreateSlackListener returns slack listenner
 func CreateSlackListener(token string, id string, channel string) *SlackListener {
 	// Discover device
-	device, err := discoverBlaster()
+	device, err := DiscoverBlaster()
 	if err != nil {
 		log.Printf("[ERROR] discover: %v", err)
 	}
