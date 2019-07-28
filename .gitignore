@@ -20,6 +20,7 @@ home_automation
 
 data/*.dat
 
+vendor/
+
 run.sh
 
-broadlink*
