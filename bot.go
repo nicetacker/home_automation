@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	discoverRetry = 3
 	mapFile = "./data/map_file.dat"
 )
 
@@ -24,10 +25,18 @@ type SlackListener struct {
 
 // CreateSlackListener returns slack listenner
 func CreateSlackListener(token string, id string, channel string) *SlackListener {
+	var device *broadlinkBlaster
+	var err error
+
 	// Discover device
-	device, err := DiscoverBlaster()
-	if err != nil {
-		log.Printf("[ERROR] discover: %v", err)
+	for i:=0; i<discoverRetry; i++ {
+		device, err = DiscoverBlaster()
+		if err != nil {
+			log.Printf("[ERROR] discover fail : %v / %v", err)
+			time.Sleep(time.Second)
+			continue
+		}
+		break
 	}
 
 	// Create DB
