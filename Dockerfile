@@ -9,15 +9,18 @@ RUN dep ensure -vendor-only=true
 
 # build
 COPY . .
-RUN dep ensure && \
-    GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -o home_automation
+RUN GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -o home_automation
+#RUN go build -o /app/home_automation
 
+WORKDIR /app
 
-FROM alpine
+# run
+FROM alpine:latest
+RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 COPY --from=builder /go/src/github.com/nicetacker/home_automation/home_automation .
 
 # run
-CMD ["home_automation"]
+CMD ["/bin/sh", "-c", "./home_automation"]
 

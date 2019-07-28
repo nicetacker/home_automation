@@ -60,6 +60,8 @@ func (s *SlackListener) ListenAndResponse() {
 			if err := s.handleMessageEvent(ev); err != nil {
 				log.Printf("[ERROR] failed to handle message: %s", err)
 			}
+		default:
+			log.Printf("Event: %v ", ev)
 		}
 	}
 }

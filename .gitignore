@@ -14,13 +14,11 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
 
 home_automation
 
 data/*.dat
 
-vendor/
-
-run.sh
-
+env.list
