@@ -15,7 +15,7 @@ type broadlinkBlaster struct {
 
 func discoverBlaster() (*broadlinkBlaster, error) {
 	// Discover devices
-	devs, _ := broadlink.DiscoverDevices(1*time.Second, 0)
+	devs, _ := broadlink.DiscoverDevices(5*time.Second, 0)
 	if len(devs) == 0 {
 		return nil, fmt.Errorf("device not found") 
 	}
