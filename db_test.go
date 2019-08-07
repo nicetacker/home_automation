@@ -10,6 +10,7 @@ func Test_DB(t *testing.T) {
 	os.Remove("/tmp/valid_path")
 	os.Create("/tmp/broken_data")
 	defer os.Remove("/tmp/broken_data")
+	defer os.Remove("/tmp/valid_path")
 
 	tests := []struct {
 		name    string
