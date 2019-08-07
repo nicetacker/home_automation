@@ -104,6 +104,25 @@ func (s *SlackListener) handleMessageEvent(ev *slack.MessageEvent) error {
 			time.Sleep(time.Second)
 		}
 		return nil
+	case "absence":
+		cmd := m[1]
+		fmt.Printf("request absence= %v.\n", cmd)
+		if cmd == "true" {
+			ir, err := s.db.get("aircon.off")
+			if err != nil {
+				fmt.Printf("aircon.off failed.\n")
+			}
+			s.device.send(ir)
+			time.Sleep(time.Second)
+
+			ir, err = s.db.get("light.off")
+			if err != nil {
+				return err
+			}
+			s.device.send(ir)
+			time.Sleep(time.Second)
+		}
+		return nil
 	case "learn":
 		cmd := m[1]
 		ircode, err := s.device.capture()
